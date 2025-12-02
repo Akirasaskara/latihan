@@ -1,26 +1,49 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { PrismaService } from 'prisma/prisma.service';
+import { LoginDto } from './dto/login.dto';
+import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
-  }
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async login(dto: LoginDto) {
+    const { username, password } = dto;
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    const user = await this.prisma.user.findUnique({
+      where: { username },
+      include: { mahasiswa: true },
+    });
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+    if (!user) {
+      throw new UnauthorizedException('Kredensial salah');
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      throw new UnauthorizedException('Kredensial salah');
+    }
+
+    const payload = {
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      mahasiswaId: user.mahasiswa?.id || null,
+    };
+
+    const token = await this.jwtService.signAsync(payload);
+
+    return {
+      status: 'success',
+      message: 'Login berhasil',
+      data: {
+        token,
+        role: user.role,
+      },
+    };
   }
 }
