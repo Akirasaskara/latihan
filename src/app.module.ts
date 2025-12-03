@@ -15,7 +15,7 @@ import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+
     AuthModule,
     DosenModule,
     MatakuliahModule,
@@ -26,9 +26,6 @@ import { UserModule } from './user/user.module';
     PrismaModule,
     UserModule,
   ],
-  providers: [PrismaService, {
-    provide: APP_GUARD,
-    useClass: RolesGuard,
-  }],
+  providers: [PrismaService],
 })
 export class AppModule {}

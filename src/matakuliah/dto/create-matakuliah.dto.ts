@@ -1,9 +1,6 @@
 import { IsNumber,IsNotEmpty,IsString, IsInt, IsIn } from "class-validator";
 
-export class UpdateMatakuliahDto {
-    @IsInt()
-    @IsNotEmpty()
-    id_matakuliah: number;
+export class CreateMatakuliahDto {
 
     @IsString()
     @IsNotEmpty()

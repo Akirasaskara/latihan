@@ -23,7 +23,7 @@ CREATE TABLE `Dosen` (
 
 -- CreateTable
 CREATE TABLE `Matakuliah` (
-    `id_matakuliah` INTEGER NOT NULL,
+    `id_matakuliah` INTEGER NOT NULL AUTO_INCREMENT,
     `nama_matakuliah` VARCHAR(191) NOT NULL,
     `id_dosen` INTEGER NOT NULL,
     `sks` INTEGER NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE `Mahasiswa` (
     `nama_mahasiswa` VARCHAR(191) NOT NULL,
     `jenis_kelamin` ENUM('L', 'P') NOT NULL,
     `jurusan` VARCHAR(191) NOT NULL,
-    `userId` INTEGER NOT NULL,
+    `userId` INTEGER NULL,
 
     UNIQUE INDEX `Mahasiswa_nim_key`(`nim`),
     UNIQUE INDEX `Mahasiswa_userId_key`(`userId`),
@@ -51,6 +51,9 @@ CREATE TABLE `Penjadwalan` (
     `id_dosen` INTEGER NOT NULL,
     `id_matakuliah` INTEGER NOT NULL,
     `jadwal` VARCHAR(191) NOT NULL,
+    `jam_mulai` DATETIME(3) NOT NULL,
+    `jam_selesai` DATETIME(3) NOT NULL,
+    `hari` VARCHAR(191) NOT NULL DEFAULT 'Monday',
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -70,7 +73,7 @@ CREATE TABLE `KRS` (
 ALTER TABLE `Matakuliah` ADD CONSTRAINT `Matakuliah_id_dosen_fkey` FOREIGN KEY (`id_dosen`) REFERENCES `Dosen`(`nidn`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Mahasiswa` ADD CONSTRAINT `Mahasiswa_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Mahasiswa` ADD CONSTRAINT `Mahasiswa_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Penjadwalan` ADD CONSTRAINT `Penjadwalan_id_dosen_fkey` FOREIGN KEY (`id_dosen`) REFERENCES `Dosen`(`nidn`) ON DELETE RESTRICT ON UPDATE CASCADE;

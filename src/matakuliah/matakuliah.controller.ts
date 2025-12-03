@@ -14,15 +14,16 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtStrategy } from 'src/auth/jwt.strategy';
+import { CreateMatakuliahDto } from './dto/create-matakuliah.dto';
 
 @Controller('matakuliah')
 export class MatakuliahController {
   constructor(private mkService: MatakuliahService) {}
 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(['ADMIN'])
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(['ADMIN', 'DOSEN'])
   @Post()
-  async create(@Body() body: any) {
+  async create(@Body() body: CreateMatakuliahDto) {
     const mk = await this.mkService.create(body);
     return {
       status: 'success',

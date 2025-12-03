@@ -10,6 +10,7 @@ datasource db {
 enum Role {
   ADMIN
   MAHASISWA
+  DOSEN
 }
 
 enum JenisKelamin {
@@ -25,6 +26,7 @@ model User {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
     mahasiswa   Mahasiswa?
+    dosen      Dosen?
 }
 
 model Dosen {
@@ -33,12 +35,13 @@ model Dosen {
   jenis_kelamin JenisKelamin
   alamat        String
   matakuliah    Matakuliah[]
-
+  userId       Int?        @unique
+  user         User?       @relation(fields: [userId], references: [id])
   penjadwalans Penjadwalan[]
 }
 
 model Matakuliah {
-  id_matakuliah Int           @id
+  id_matakuliah Int           @id @default(autoincrement())
   nama_matakuliah String
   id_dosen      Int
   sks           Int
@@ -64,6 +67,9 @@ model Penjadwalan {
   id_dosen      Int
   id_matakuliah Int
   jadwal        String
+  jam_mulai     DateTime
+  jam_selesai   DateTime
+  hari          String        @default("Monday")
 
   dosen         Dosen       @relation(fields: [id_dosen], references: [nidn])
   matakuliah    Matakuliah  @relation(fields: [id_matakuliah], references: [id_matakuliah])
